@@ -7,11 +7,12 @@ This is a basic demonstration of the Marching Squares algorithm using C# and Ope
 - Interactive controls to show grid, draw marching square lines, and modify the grid.
 
 ## Controls
-- **Q**: Toggle grid.
+- **Q**: Toggle grid layout.
 - **W**: Toggle marching square lines.
 - **E**: Remove 1x1 squares from the grid.
-- **R**: Fill in the grid with values.
-- **Space**: Create a new grid (reset the grid and start fresh).
+- **R**: Fill in the area.
+- **Space**: Create new scalar values.
+- **ESC**: End application.
 
 ## Instruction
 
