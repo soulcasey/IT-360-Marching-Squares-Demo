@@ -5,9 +5,9 @@ partial class MarchingSquares
     // Settings
     const int WIDTH = 1200;
     const int HEIGHT = 1000;
-    const int CELLSIZE = 10; 
+    const int CELLSIZE = 100; 
     const float THRESHOLD = 0.5f;
-    const bool IS_DISPLAY_TEXT = false;
+    const bool IS_DISPLAY_TEXT = true;
 
     static void Main(string[] args)
     {
