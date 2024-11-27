@@ -13,7 +13,7 @@ partial class MarchingSquares
         canvas.SetTo(backgroundColor);
     }
 
-    static float[,] CreateScalarField(int cols, int rows)
+    static float[,] CreateScalarField(int cols, int rows, int min, int max)
     {
         float[,] scalarField = new float[cols + 1, rows + 1];
 
@@ -22,7 +22,7 @@ partial class MarchingSquares
         {
             for (int x = 0; x <= cols; x++)
             {
-                scalarField[x, y] = RANDOM.Next(MIN, MAX + 1);
+                scalarField[x, y] = RANDOM.Next(min, max + 1);
             }
         }
 
@@ -147,17 +147,19 @@ partial class MarchingSquares
     }
 
     // Optional remover for 1x1 squares
-    static void RemoveSmallSquares(float[,] scalarField, float threshold)
+    static float[,] RemoveSmallSquares(float[,] scalarField, float threshold, int min, int max)
     {
-        for (int y = 0; y < scalarField.GetLength(1) - 2; y++)
+        float[,] newScalarField = (float[,])scalarField.Clone(); 
+
+        for (int y = 0; y < newScalarField.GetLength(1) - 2; y++)
         {  
-            for (int x = 0; x < scalarField.GetLength(0) - 2; x++)
+            for (int x = 0; x < newScalarField.GetLength(0) - 2; x++)
             {
                 // Get the index of each square based on its corner points
-                int topLeftCaseIndex = GetIndex(scalarField, x, y, threshold);
-                int topRightCaseIndex = GetIndex(scalarField, x + 1, y, threshold);
-                int bottomRightCaseIndex = GetIndex(scalarField, x + 1, y + 1, threshold);
-                int bottomLeftCaseIndex = GetIndex(scalarField, x, y + 1, threshold);
+                int topLeftCaseIndex = GetIndex(newScalarField, x, y, threshold);
+                int topRightCaseIndex = GetIndex(newScalarField, x + 1, y, threshold);
+                int bottomRightCaseIndex = GetIndex(newScalarField, x + 1, y + 1, threshold);
+                int bottomLeftCaseIndex = GetIndex(newScalarField, x, y + 1, threshold);
 
                 // Arrays of case indexes where small squares should be "fixed"
                 int[] bottomRightLineIndexes = new int[] { 2, 5, 13 };
@@ -174,9 +176,11 @@ partial class MarchingSquares
                 // If all four conditions are met, count it as a small square
                 if (isTopLeftFix && isTopRightFix && isBottomRightFix && isBottomLeftFix)
                 {
-                    scalarField[x + 1, y + 1] = scalarField[x + 1, y + 1] > threshold ? MIN : MAX;
+                    newScalarField[x + 1, y + 1] = newScalarField[x + 1, y + 1] > threshold ? min : max;
                 }
             }
         }
+
+        return newScalarField;
     }
 }

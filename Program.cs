@@ -5,13 +5,10 @@ partial class MarchingSquares
     // Settings
     const int WIDTH = 1200;
     const int HEIGHT = 1000;
-    const int CELL_SIZE = 100; 
+    const int CELL_SIZE = 40; 
     const int MIN = 0;
-    const int MAX = 1;
-    const float THRESHOLD = 0.5f;
-    const bool IS_DISPLAY_TEXT = true; // Either show text or dot for points. Ideally set it to false at below 40 cell size
-    const bool IS_REMOVE_SQUARE = false; // Remove 1x1 squares
-
+    const int MAX = 9;
+    const float THRESHOLD = 4.9f;
 
     static readonly Random RANDOM = new Random();
     const int ESC = 27;
@@ -24,44 +21,65 @@ partial class MarchingSquares
         // Create a window
         using Mat canvas = new Mat(HEIGHT, WIDTH, MatType.CV_8UC3);
 
+        bool isShowGrid = true; // Q 
+        bool isShowMarchingSquares = false; // W
+        bool isRemoveSquare = false; // E
+
+        float[,] scalarField = CreateScalarField(cols, rows, MIN, MAX);
+        float[,] scalarFieldWithoutSquare = RemoveSmallSquares(scalarField, THRESHOLD, MIN, MAX);
+
         while (true)
         {
-            float[,] scalarField = CreateScalarField(cols, rows);
+            float[,] targetScalarField = isRemoveSquare ? scalarFieldWithoutSquare : scalarField;
 
             ResetScreen(canvas);
-            DrawGrid(canvas, scalarField, CELL_SIZE);
-            
-            bool isDisplayText = IS_DISPLAY_TEXT;
-            if (isDisplayText == true)
-                DrawVertexNumbers(canvas, scalarField, CELL_SIZE);
-            else
-                DrawVertexDots(canvas, scalarField, CELL_SIZE, THRESHOLD);
-        
-            RefreshScreen(canvas);
-            if (Cv2.WaitKey(0) == ESC) break;
 
-            PerformMarchingSquares(canvas, scalarField, CELL_SIZE, THRESHOLD);
-            RefreshScreen(canvas);
-            if (Cv2.WaitKey(0) == ESC) break;
-
-            ResetScreen(canvas);
-            PerformMarchingSquares(canvas, scalarField, CELL_SIZE, THRESHOLD);
-
-            RefreshScreen(canvas);
-            if (Cv2.WaitKey(0) == ESC) break;
-
-            bool isRemoveSquare = IS_REMOVE_SQUARE;
-            if (isRemoveSquare == true)
+            if (isShowGrid)
             {
-                ResetScreen(canvas);
-                RemoveSmallSquares(scalarField, THRESHOLD);
-                PerformMarchingSquares(canvas, scalarField, CELL_SIZE, THRESHOLD);
+                DrawGrid(canvas, targetScalarField, CELL_SIZE);
 
-                RefreshScreen(canvas);
-                if (Cv2.WaitKey(0) == ESC) break;
+                bool isShowNumber = CELL_SIZE >= 40; // Set numbers to dots instead when cell size gets too small
+                if (isShowNumber)
+                    DrawVertexNumbers(canvas, targetScalarField, CELL_SIZE);
+                else
+                    DrawVertexDots(canvas, targetScalarField, CELL_SIZE, THRESHOLD);
+            }
+
+            if (isShowMarchingSquares)
+                PerformMarchingSquares(canvas, targetScalarField, CELL_SIZE, THRESHOLD);
+
+            RefreshScreen(canvas);
+
+            int key = Cv2.WaitKey();
+            switch (key)
+            {
+                case ESC:
+                    Cv2.DestroyAllWindows();
+                    return; // Exit the program
+
+                case 'Q':
+                case 'q':
+                    isShowGrid = !isShowGrid; // Toggle showing grid
+                    break;
+
+                case 'W':
+                case 'w':
+                    isShowMarchingSquares = !isShowMarchingSquares; // Toggle showing grid
+                    break;
+
+                case 'E':
+                case 'e':
+                    isRemoveSquare = !isRemoveSquare; // Toggle marching squares
+                    break;
+
+                case 'R':
+                case 'r':
+                    scalarField = CreateScalarField(cols, rows, MIN, MAX);
+                    scalarFieldWithoutSquare = RemoveSmallSquares(scalarField, THRESHOLD, MIN, MAX);
+                    break;
+
+
             }
         }
-
-        Cv2.DestroyAllWindows();
     }
 }
