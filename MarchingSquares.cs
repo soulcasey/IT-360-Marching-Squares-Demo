@@ -78,7 +78,7 @@ partial class MarchingSquares
     }
 
     // Perform Marching Squares algorithm and draw contours
-    static void PerformMarchingSquares(Mat canvas, float[,] scalarField, int cellSize, float threshold)
+    static void PerformMarchingSquares(Mat canvas, float[,] scalarField, int cellSize, float threshold, bool isFill)
     {
         for (int y = 0; y < scalarField.GetLength(1) - 1; y++)
         {
@@ -92,6 +92,12 @@ partial class MarchingSquares
                 Point left = new Point(x * cellSize, (y + 0.5f) * cellSize);
                 Point right = new Point((x + 1) * cellSize, (y + 0.5f) * cellSize);
 
+                // Calculate corners of the cell
+                Point topLeft = new Point(x * cellSize, y * cellSize);
+                Point topRight = new Point((x + 1) * cellSize, y * cellSize);
+                Point bottomLeft = new Point(x * cellSize, (y + 1) * cellSize);
+                Point bottomRight = new Point((x + 1) * cellSize, (y + 1) * cellSize);
+
                 Scalar color = Scalar.White;
 
                 // Draw contours based on case index
@@ -99,21 +105,72 @@ partial class MarchingSquares
                 {
                     case 0: // No contour
                         break;
-                    case 1: DrawLine(canvas, left, bottom, color); break;
-                    case 2: DrawLine(canvas, right, bottom, color); break;
-                    case 3: DrawLine(canvas, left, right, color); break;
-                    case 4: DrawLine(canvas, top, right, color); break;
-                    case 5: DrawLine(canvas, left, top, color); DrawLine(canvas, bottom, right, color); break;
-                    case 6: DrawLine(canvas, top, bottom, color); break;
-                    case 7: DrawLine(canvas, left, top, color); break;
-                    case 8: DrawLine(canvas, top, left, color); break;
-                    case 9: DrawLine(canvas, top, bottom, color); break;
-                    case 10: DrawLine(canvas, left, bottom, color); DrawLine(canvas, top, right, color); break;
-                    case 11: DrawLine(canvas, top, right, color); break;
-                    case 12: DrawLine(canvas, left, right, color); break;
-                    case 13: DrawLine(canvas, bottom, right, color); break;
-                    case 14: DrawLine(canvas, left, bottom, color); break;
+                    case 1:
+                        if (isFill) DrawPoly(canvas, [[left, bottomLeft, bottom]], color);
+                        else DrawLine(canvas, left, bottom, color);
+                        break;
+                    case 2:
+                        if (isFill) DrawPoly(canvas, [[right, bottomRight, bottom]], color);
+                        else DrawLine(canvas, right, bottom, color);
+                        break;
+                    case 3:
+                        if (isFill) DrawPoly(canvas, [[left, bottomLeft, bottomRight, right]], color);
+                        else DrawLine(canvas, left, right, color);
+                        break;
+                    case 4:
+                        if (isFill) DrawPoly(canvas, [[top, topRight, right]], color);
+                        else DrawLine(canvas, top, right, color);
+                        break;
+                    case 5:
+                        if (isFill) DrawPoly(canvas, [[bottomLeft, left, top, topRight, right, bottom]], color);
+                        else
+                        {
+                            DrawLine(canvas, left, top, color);
+                            DrawLine(canvas, bottom, right, color);
+                        }
+                        break;
+                    case 6:
+                        if (isFill) DrawPoly(canvas, [[top, topRight, bottomRight, bottom]], color);
+                        else DrawLine(canvas, top, bottom, color);
+                        break;
+                    case 7:
+                        if (isFill) DrawPoly(canvas, [[bottomLeft, left, top, topRight, bottomRight]], color);
+                        else DrawLine(canvas, left, top, color);
+                        break;
+                    case 8:
+                        if (isFill) DrawPoly(canvas, [[left, topLeft, top]], color);
+                        else DrawLine(canvas, top, left, color);
+                        break;
+                    case 9:
+                        if (isFill) DrawPoly(canvas, [[topLeft, top, bottom, bottomLeft]], color);
+                        else DrawLine(canvas, top, bottom, color);
+                        break;
+                    case 10:
+                        if (isFill) DrawPoly(canvas, [[left, topLeft, top, right, bottomRight, bottom]], color);
+                        else
+                        {
+                            DrawLine(canvas, left, bottom, color);
+                            DrawLine(canvas, top, right, color);
+                        }   
+                        break;
+                    case 11:
+                        if (isFill) DrawPoly(canvas, [[topLeft, top, right, bottomRight, bottomLeft]], color);
+                        else DrawLine(canvas, top, right, color);
+                        break;
+                    case 12:
+                        if (isFill) DrawPoly(canvas, [[topLeft, topRight, right, left]], color);
+                        else DrawLine(canvas, left, right, color);
+                        break;
+                    case 13:
+                        if (isFill) DrawPoly(canvas, [[bottomLeft, topLeft, topRight, right, bottom]], color);
+                        else DrawLine(canvas, bottom, right, color);
+                        break;
+                    case 14:
+                        if (isFill) DrawPoly(canvas, [[left, topLeft, topRight, bottomRight, bottom]], color);
+                        else DrawLine(canvas, left, bottom, color);
+                        break;
                     case 15:  // No contour
+                        if (isFill) DrawPoly(canvas, [[topLeft, topRight, bottomRight, bottomLeft]], color);
                         break;
                 }
             }
@@ -143,8 +200,14 @@ partial class MarchingSquares
     // Helper method to draw a line
     static void DrawLine(Mat canvas, Point start, Point end, Scalar color)
     {
-        Cv2.Line(canvas, new Point(start.X, start.Y), new Point((int)end.X, (int)end.Y), color, 2);
+        Cv2.Line(canvas, new Point(start.X, start.Y), new Point(end.X, end.Y), color, 2);
     }
+
+    static void DrawPoly(Mat canvas, Point[][] points, Scalar color)
+    {
+        Cv2.FillPoly(canvas, points, color); 
+    }
+
 
     // Optional remover for 1x1 squares
     static float[,] RemoveSmallSquares(float[,] scalarField, float threshold, int min, int max)

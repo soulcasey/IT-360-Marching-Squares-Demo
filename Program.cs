@@ -12,6 +12,7 @@ partial class MarchingSquares
 
     static readonly Random RANDOM = new Random();
     const int ESC = 27;
+    const int SPACE = 32;
 
     static void Main(string[] args)
     {
@@ -24,6 +25,7 @@ partial class MarchingSquares
         bool isShowGrid = true; // Q 
         bool isShowMarchingSquares = false; // W
         bool isRemoveSquare = false; // E
+        bool isFill = false; // R
 
         float[,] scalarField = CreateScalarField(cols, rows, MIN, MAX);
         float[,] scalarFieldWithoutSquare = RemoveSmallSquares(scalarField, THRESHOLD, MIN, MAX);
@@ -46,7 +48,7 @@ partial class MarchingSquares
             }
 
             if (isShowMarchingSquares)
-                PerformMarchingSquares(canvas, targetScalarField, CELL_SIZE, THRESHOLD);
+                PerformMarchingSquares(canvas, targetScalarField, CELL_SIZE, THRESHOLD, isFill);
 
             RefreshScreen(canvas);
 
@@ -71,9 +73,13 @@ partial class MarchingSquares
                 case 'e':
                     isRemoveSquare = !isRemoveSquare; // Toggle marching squares
                     break;
-
+                
                 case 'R':
                 case 'r':
+                    isFill = !isFill; // Toggle fill
+                    break;
+
+                case SPACE:
                     scalarField = CreateScalarField(cols, rows, MIN, MAX);
                     scalarFieldWithoutSquare = RemoveSmallSquares(scalarField, THRESHOLD, MIN, MAX);
                     break;
