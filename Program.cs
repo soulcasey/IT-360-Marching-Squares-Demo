@@ -26,7 +26,7 @@ partial class MarchingSquares
 
         while (true)
         {
-            float[,] scalarField = CreateScalarField(cols, rows, MIN, MAX);
+            float[,] scalarField = CreateScalarField(cols, rows);
 
             ResetScreen(canvas);
             DrawGrid(canvas, scalarField, CELL_SIZE);

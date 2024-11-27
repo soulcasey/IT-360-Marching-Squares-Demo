@@ -13,7 +13,7 @@ partial class MarchingSquares
         canvas.SetTo(backgroundColor);
     }
 
-    static float[,] CreateScalarField(int cols, int rows, int min, int max)
+    static float[,] CreateScalarField(int cols, int rows)
     {
         float[,] scalarField = new float[cols + 1, rows + 1];
 
@@ -22,7 +22,7 @@ partial class MarchingSquares
         {
             for (int x = 0; x <= cols; x++)
             {
-                scalarField[x, y] = RANDOM.Next(min, max + 1);
+                scalarField[x, y] = RANDOM.Next(MIN, MAX + 1);
             }
         }
 
@@ -174,8 +174,7 @@ partial class MarchingSquares
                 // If all four conditions are met, count it as a small square
                 if (isTopLeftFix && isTopRightFix && isBottomRightFix && isBottomLeftFix)
                 {
-                    float top = scalarField[x + 1, y];
-                    scalarField[x + 1, y + 1] = top;
+                    scalarField[x + 1, y + 1] = scalarField[x + 1, y + 1] > threshold ? MIN : MAX;
                 }
             }
         }
