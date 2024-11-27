@@ -1,0 +1,18 @@
+# Ignore build output directories
+/bin/
+/obj/
+
+# Ignore user-specific files
+.vs/
+.vscode/
+
+# Ignore local NuGet packages
+*.nupkg
+
+# Ignore compiled files
+*.dll
+*.exe
+
+# Ignore temporary files
+*.user
+*.suo
