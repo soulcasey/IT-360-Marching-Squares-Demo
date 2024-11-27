@@ -2,11 +2,12 @@
 
 partial class MarchingSquares
 {
-    // Window and grid settings
+    // Settings
     const int WIDTH = 1200;
-    const int HEIGHT = 1000; // Window dimensions
-    const int CELLSIZE = 40;             // Size of each cell
-    const float THRESHOLD = 0.5f;        // Contour threshold
+    const int HEIGHT = 1000;
+    const int CELLSIZE = 10; 
+    const float THRESHOLD = 0.5f;
+    const bool IS_DISPLAY_TEXT = false;
 
     static void Main(string[] args)
     {
@@ -24,25 +25,28 @@ partial class MarchingSquares
 
             // Draw grid and numbers
             DrawGrid(canvas, cols, rows, CELLSIZE);
-            DrawVertexNumbers(canvas, scalarField, cols, rows, CELLSIZE, THRESHOLD);
-
+            if (IS_DISPLAY_TEXT == true)
+                DrawVertexNumbers(canvas, scalarField, cols, rows, CELLSIZE);
+            else
+                DrawVertexDots(canvas, scalarField, cols, rows, CELLSIZE, THRESHOLD);
+        
             RefreshScreen(canvas);
-            int key = Cv2.WaitKey(0); // Wait for 1 millisecond for a key press
-            if (key == 'q' || key == 81) // Check for 'q' or 'Q' key press
+            int key = Cv2.WaitKey(0);
+            if (key == 'q' || key == 81)
                 break;
 
             PerformMarchingSquares(canvas, scalarField, cols, rows, CELLSIZE, THRESHOLD);
             RefreshScreen(canvas);
-            key = Cv2.WaitKey(0); // Wait for 1 millisecond for a key press
-            if (key == 'q' || key == 81) // Check for 'q' or 'Q' key press
+            key = Cv2.WaitKey(0);
+            if (key == 'q' || key == 81)
                 break;
 
             ResetScreen(canvas);
             PerformMarchingSquares(canvas, scalarField, cols, rows, CELLSIZE, THRESHOLD);
 
             RefreshScreen(canvas);
-            key = Cv2.WaitKey(0); // Wait for 1 millisecond for a key press
-            if (key == 'q' || key == 81) // Check for 'q' or 'Q' key press
+            key = Cv2.WaitKey(0);
+            if (key == 'q' || key == 81)
                 break;
         }
 

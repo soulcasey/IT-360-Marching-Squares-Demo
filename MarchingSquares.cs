@@ -45,8 +45,22 @@ partial class MarchingSquares
         }
     }
 
-    // Display numbers (1 or 0) at vertices of the grid
-    static void DrawVertexNumbers(Mat canvas, float[,] scalarField, int cols, int rows, int cellSize, float threshold)
+    static void DrawVertexNumbers(Mat canvas, float[,] scalarField, int cols, int rows, int cellSize)
+    {
+        for (int y = 0; y <= rows; y++)
+        {
+            for (int x = 0; x <= cols; x++)
+            {
+                float value = scalarField[x, y];
+                
+                Point position = new Point(x * cellSize - 10, y * cellSize + 10);
+
+                Cv2.PutText(canvas, value.ToString(), position, HersheyFonts.HersheyScriptSimplex, 1, Scalar.White, 2);
+            }
+        }
+    }
+
+    static void DrawVertexDots(Mat canvas, float[,] scalarField, int cols, int rows, int cellSize, float threshold)
     {
         for (int y = 0; y <= rows; y++)
         {
@@ -54,11 +68,11 @@ partial class MarchingSquares
             {
                 float value = scalarField[x, y];
 
-                // Get the position of the vertex
-                Point vertexPosition = new Point(x * cellSize, y * cellSize);
+                Point position = new Point(x * cellSize, y * cellSize);
+                Scalar color = value > threshold ? Scalar.White : Scalar.Black;
+                int radius = 4;
 
-                // Draw the number at the vertex
-                Cv2.PutText(canvas, value.ToString(), new Point(vertexPosition.X - 10, vertexPosition.Y + 10), HersheyFonts.HersheyScriptSimplex, 1, Scalar.White, 2);
+                Cv2.Circle(canvas, position, radius, color, -1);
             }
         }
     }
@@ -66,8 +80,6 @@ partial class MarchingSquares
     // Perform Marching Squares algorithm and draw contours
     static void PerformMarchingSquares(Mat canvas, float[,] scalarField, int cols, int rows, int cellSize, float threshold)
     {
-        Scalar red = new Scalar(0, 0, 255); // Red color for contours
-
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -82,30 +94,30 @@ partial class MarchingSquares
                 int caseIndex = GetIndex(topLeft, topRight, bottomRight, bottomLeft, threshold);
 
                 // Calculate midpoints
-                Point2f top = new Point2f((x + 0.5f) * cellSize, y * cellSize);
-                Point2f bottom = new Point2f((x + 0.5f) * cellSize, (y + 1) * cellSize);
-                Point2f left = new Point2f(x * cellSize, (y + 0.5f) * cellSize);
-                Point2f right = new Point2f((x + 1) * cellSize, (y + 0.5f) * cellSize);
+                Point top = new Point((x + 0.5f) * cellSize, y * cellSize);
+                Point bottom = new Point((x + 0.5f) * cellSize, (y + 1) * cellSize);
+                Point left = new Point(x * cellSize, (y + 0.5f) * cellSize);
+                Point right = new Point((x + 1) * cellSize, (y + 0.5f) * cellSize);
 
                 // Draw contours based on case index
                 switch (caseIndex)
                 {
                     case 0: // No contour
                         break;
-                    case 1: DrawLine(canvas, left, bottom, red); break;
-                    case 2: DrawLine(canvas, right, bottom, red); break;
-                    case 3: DrawLine(canvas, left, right, red); break;
-                    case 4: DrawLine(canvas, top, right, red); break;
-                    case 5: DrawLine(canvas, left, top, red); DrawLine(canvas, bottom, right, red); break;
-                    case 6: DrawLine(canvas, top, bottom, red); break;
-                    case 7: DrawLine(canvas, left, top, red); break;
-                    case 8: DrawLine(canvas, top, left, red); break;
-                    case 9: DrawLine(canvas, top, bottom, red); break;
-                    case 10: DrawLine(canvas, left, bottom, red); DrawLine(canvas, top, right, red); break;
-                    case 11: DrawLine(canvas, top, right, red); break;
-                    case 12: DrawLine(canvas, left, right, red); break;
-                    case 13: DrawLine(canvas, bottom, right, red); break;
-                    case 14: DrawLine(canvas, left, bottom, red); break;
+                    case 1: DrawLine(canvas, left, bottom, Scalar.Red); break;
+                    case 2: DrawLine(canvas, right, bottom, Scalar.Red); break;
+                    case 3: DrawLine(canvas, left, right, Scalar.Red); break;
+                    case 4: DrawLine(canvas, top, right, Scalar.Red); break;
+                    case 5: DrawLine(canvas, left, top, Scalar.Red); DrawLine(canvas, bottom, right, Scalar.Red); break;
+                    case 6: DrawLine(canvas, top, bottom, Scalar.Red); break;
+                    case 7: DrawLine(canvas, left, top, Scalar.Red); break;
+                    case 8: DrawLine(canvas, top, left, Scalar.Red); break;
+                    case 9: DrawLine(canvas, top, bottom, Scalar.Red); break;
+                    case 10: DrawLine(canvas, left, bottom, Scalar.Red); DrawLine(canvas, top, right, Scalar.Red); break;
+                    case 11: DrawLine(canvas, top, right, Scalar.Red); break;
+                    case 12: DrawLine(canvas, left, right, Scalar.Red); break;
+                    case 13: DrawLine(canvas, bottom, right, Scalar.Red); break;
+                    case 14: DrawLine(canvas, left, bottom, Scalar.Red); break;
                     case 15:  // No contour
                         break;
                 }
@@ -127,8 +139,8 @@ partial class MarchingSquares
 
 
     // Helper method to draw a line
-    static void DrawLine(Mat canvas, Point2f start, Point2f end, Scalar color)
+    static void DrawLine(Mat canvas, Point start, Point end, Scalar color)
     {
-        Cv2.Line(canvas, new Point((int)start.X, (int)start.Y), new Point((int)end.X, (int)end.Y), color, 2);
+        Cv2.Line(canvas, new Point(start.X, start.Y), new Point((int)end.X, (int)end.Y), color, 2);
     }
 }
