@@ -9,12 +9,12 @@ partial class MarchingSquares
 
     static void ResetScreen(Mat canvas)
     {
-        canvas.SetTo(Scalar.Black);
+        Scalar backgroundColor = new Scalar(22, 3, 1);
+        canvas.SetTo(backgroundColor);
     }
 
-    static float[,] CreateScalarField(int cols, int rows)
+    static float[,] CreateScalarField(int cols, int rows, int min, int max)
     {
-        Random random = new Random();
         float[,] scalarField = new float[cols + 1, rows + 1];
 
         // Fill the scalar field with random values
@@ -22,7 +22,7 @@ partial class MarchingSquares
         {
             for (int x = 0; x <= cols; x++)
             {
-                scalarField[x, y] = random.Next(0, 2);
+                scalarField[x, y] = RANDOM.Next(min, max + 1);
             }
         }
 
@@ -99,25 +99,27 @@ partial class MarchingSquares
                 Point left = new Point(x * cellSize, (y + 0.5f) * cellSize);
                 Point right = new Point((x + 1) * cellSize, (y + 0.5f) * cellSize);
 
+                Scalar color = Scalar.White;
+
                 // Draw contours based on case index
                 switch (caseIndex)
                 {
                     case 0: // No contour
                         break;
-                    case 1: DrawLine(canvas, left, bottom, Scalar.Red); break;
-                    case 2: DrawLine(canvas, right, bottom, Scalar.Red); break;
-                    case 3: DrawLine(canvas, left, right, Scalar.Red); break;
-                    case 4: DrawLine(canvas, top, right, Scalar.Red); break;
-                    case 5: DrawLine(canvas, left, top, Scalar.Red); DrawLine(canvas, bottom, right, Scalar.Red); break;
-                    case 6: DrawLine(canvas, top, bottom, Scalar.Red); break;
-                    case 7: DrawLine(canvas, left, top, Scalar.Red); break;
-                    case 8: DrawLine(canvas, top, left, Scalar.Red); break;
-                    case 9: DrawLine(canvas, top, bottom, Scalar.Red); break;
-                    case 10: DrawLine(canvas, left, bottom, Scalar.Red); DrawLine(canvas, top, right, Scalar.Red); break;
-                    case 11: DrawLine(canvas, top, right, Scalar.Red); break;
-                    case 12: DrawLine(canvas, left, right, Scalar.Red); break;
-                    case 13: DrawLine(canvas, bottom, right, Scalar.Red); break;
-                    case 14: DrawLine(canvas, left, bottom, Scalar.Red); break;
+                    case 1: DrawLine(canvas, left, bottom, color); break;
+                    case 2: DrawLine(canvas, right, bottom, color); break;
+                    case 3: DrawLine(canvas, left, right, color); break;
+                    case 4: DrawLine(canvas, top, right, color); break;
+                    case 5: DrawLine(canvas, left, top, color); DrawLine(canvas, bottom, right, color); break;
+                    case 6: DrawLine(canvas, top, bottom, color); break;
+                    case 7: DrawLine(canvas, left, top, color); break;
+                    case 8: DrawLine(canvas, top, left, color); break;
+                    case 9: DrawLine(canvas, top, bottom, color); break;
+                    case 10: DrawLine(canvas, left, bottom, color); DrawLine(canvas, top, right, color); break;
+                    case 11: DrawLine(canvas, top, right, color); break;
+                    case 12: DrawLine(canvas, left, right, color); break;
+                    case 13: DrawLine(canvas, bottom, right, color); break;
+                    case 14: DrawLine(canvas, left, bottom, color); break;
                     case 15:  // No contour
                         break;
                 }
