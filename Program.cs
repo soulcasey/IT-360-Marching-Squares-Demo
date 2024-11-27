@@ -5,10 +5,10 @@ partial class MarchingSquares
     // Settings
     const int WIDTH = 1200;
     const int HEIGHT = 1000;
-    const int CELL_SIZE = 40; 
+    const int CELL_SIZE = 100; 
     const int MIN = 0;
-    const int MAX = 9;
-    const float THRESHOLD = 4.9f;
+    const int MAX = 1;
+    const float THRESHOLD = 0.5f;
 
     static readonly Random RANDOM = new Random();
     const int ESC = 27;
