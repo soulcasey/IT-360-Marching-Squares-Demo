@@ -13,6 +13,8 @@ This is a basic demonstration of the Marching Squares algorithm using C# and Ope
 - **R**: Fill in the grid with values.
 - **Space**: Create a new grid (reset the grid and start fresh).
 
+## Instruction
+
 ### 1. Make sure you have the .NET SDK
 [Download .NET SDK](https://dotnet.microsoft.com/en-us/download)
 
