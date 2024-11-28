@@ -27,12 +27,12 @@ partial class MarchingSquares
         bool isRemoveSquare = false; // E
         bool isFill = false; // R
 
-        float[,] scalarField = CreateScalarField(cols, rows, MIN, MAX);
-        float[,] scalarFieldWithoutSquare = RemoveSmallSquares(scalarField, THRESHOLD, MIN, MAX);
+        int[,] scalarField = CreateScalarField(cols, rows, MIN, MAX);
+        int[,] scalarFieldWithoutSquare = RemoveSmallSquares(scalarField, THRESHOLD, MIN, MAX);
 
         while (true)
         {
-            float[,] targetScalarField = isRemoveSquare ? scalarFieldWithoutSquare : scalarField;
+            int[,] targetScalarField = isRemoveSquare ? scalarFieldWithoutSquare : scalarField;
 
             ResetScreen(canvas);
 
@@ -44,7 +44,7 @@ partial class MarchingSquares
                 if (isShowNumber)
                     DrawVertexNumbers(canvas, targetScalarField, CELL_SIZE);
                 else
-                    DrawVertexDots(canvas, targetScalarField, CELL_SIZE, THRESHOLD);
+                    DrawVertexDots(canvas, targetScalarField, CELL_SIZE, MIN, MAX);
             }
 
             if (isShowMarchingSquares)

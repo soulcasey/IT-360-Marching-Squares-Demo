@@ -13,9 +13,9 @@ partial class MarchingSquares
         canvas.SetTo(backgroundColor);
     }
 
-    static float[,] CreateScalarField(int cols, int rows, int min, int max)
+    static int[,] CreateScalarField(int cols, int rows, int min, int max)
     {
-        float[,] scalarField = new float[cols + 1, rows + 1];
+        int[,] scalarField = new int[cols + 1, rows + 1];
 
         // Fill the scalar field with random values
         for (int y = 0; y <= rows; y++)
@@ -30,7 +30,7 @@ partial class MarchingSquares
     }
 
     // Draw the grid lines
-    static void DrawGrid(Mat canvas, float[,] scalarField, int cellSize)
+    static void DrawGrid(Mat canvas, int[,] scalarField, int cellSize)
     {
         for (int y = 0; y < scalarField.GetLength(1); y++)
         {
@@ -45,13 +45,13 @@ partial class MarchingSquares
         }
     }
 
-    static void DrawVertexNumbers(Mat canvas, float[,] scalarField, int cellSize)
+    static void DrawVertexNumbers(Mat canvas, int[,] scalarField, int cellSize)
     {
         for (int y = 0; y < scalarField.GetLength(1); y++)
         {
             for (int x = 0; x < scalarField.GetLength(0); x++)
             {
-                float value = scalarField[x, y];
+                int value = scalarField[x, y];
                 
                 Point position = new Point(x * cellSize - 10, y * cellSize + 10);
 
@@ -60,16 +60,17 @@ partial class MarchingSquares
         }
     }
 
-    static void DrawVertexDots(Mat canvas, float[,] scalarField, int cellSize, float threshold)
+    static void DrawVertexDots(Mat canvas, int[,] scalarField, int cellSize, int min, int max)
     {
         for (int y = 0; y < scalarField.GetLength(1); y++)
         {
             for (int x = 0; x < scalarField.GetLength(0); x++)
             {
-                float value = scalarField[x, y];
+                int value = scalarField[x, y];
 
                 Point position = new Point(x * cellSize, y * cellSize);
-                Scalar color = value > threshold ? Scalar.White : Scalar.Black;
+                int ratio = 255 * (value - min) / (max - min);
+                Scalar color = new Scalar(ratio, ratio, ratio);
                 int radius = 4;
 
                 Cv2.Circle(canvas, position, radius, color, -1);
@@ -78,7 +79,7 @@ partial class MarchingSquares
     }
 
     // Perform Marching Squares algorithm and draw contours
-    static void PerformMarchingSquares(Mat canvas, float[,] scalarField, int cellSize, float threshold, bool isFill)
+    static void PerformMarchingSquares(Mat canvas, int[,] scalarField, int cellSize, float threshold, bool isFill)
     {
         for (int y = 0; y < scalarField.GetLength(1) - 1; y++)
         {
@@ -178,16 +179,16 @@ partial class MarchingSquares
     }
 
     // Convert square into index
-    static int GetIndex(float[,] scalarField, int x, int y, float threshold)
+    static int GetIndex(int[,] scalarField, int x, int y, float threshold)
     {
         int index = 0;
 
         // Get values for each corner
         // Bigger y is closer to bottom
-        float topLeft = scalarField[x, y];
-        float topRight = scalarField[x + 1, y];
-        float bottomRight = scalarField[x + 1, y + 1]; 
-        float bottomLeft = scalarField[x, y + 1]; 
+        int topLeft = scalarField[x, y];
+        int topRight = scalarField[x + 1, y];
+        int bottomRight = scalarField[x + 1, y + 1]; 
+        int bottomLeft = scalarField[x, y + 1]; 
 
         if (topLeft > threshold) index |= 8;
         if (topRight > threshold) index |= 4;
@@ -210,9 +211,9 @@ partial class MarchingSquares
 
 
     // Optional remover for 1x1 squares
-    static float[,] RemoveSmallSquares(float[,] scalarField, float threshold, int min, int max)
+    static int[,] RemoveSmallSquares(int[,] scalarField, float threshold, int min, int max)
     {
-        float[,] newScalarField = (float[,])scalarField.Clone(); 
+        int[,] newScalarField = (int[,])scalarField.Clone(); 
 
         for (int y = 0; y < newScalarField.GetLength(1) - 2; y++)
         {  
@@ -236,10 +237,13 @@ partial class MarchingSquares
                 bool isBottomRightFix = topLeftLineIndexes.Contains(bottomRightCaseIndex);
                 bool isBottomLeftFix = topRightLineIndexes.Contains(bottomLeftCaseIndex);
 
-                // If all four conditions are met, count it as a small square
+                // If all four conditions are met, it is a small square
+                // Replace the center with the average of up down left right
                 if (isTopLeftFix && isTopRightFix && isBottomRightFix && isBottomLeftFix)
                 {
-                    newScalarField[x + 1, y + 1] = newScalarField[x + 1, y + 1] > threshold ? min : max;
+                    int average = (int)Math.Round((newScalarField[x + 1, y] + newScalarField[x + 1, y + 2] + newScalarField[x, y + 1] +  newScalarField[x + 2, y + 1]) / 4f);
+
+                    newScalarField[x + 1, y + 1] = average;
                 }
             }
         }
