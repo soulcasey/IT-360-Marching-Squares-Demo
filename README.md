@@ -22,7 +22,7 @@ This is a basic demonstration of the Marching Squares algorithm using C# and Ope
 ### 2. Clone the Repository
 Open terminal and run the following line
 ```bash
-git clone https://github.com/your-username/IT-360-Marching-Squares-Demo.git
+git clone https://github.com/soulcasey/IT-360-Marching-Squares-Demo.git
 ```
 
 ### 3. Navigate into folder
